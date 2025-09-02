@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Script from "next/script";
 
 type Result = {
   ok: boolean;
@@ -35,6 +36,34 @@ function LanguageSwitcher() {
       <span className="text-sm text-[color:var(--subtle)]">Language</span>
       <div id="google_translate_element" className="min-w-[180px]"></div>
     </div>
+  );
+}
+
+// AdSense component
+function AdSenseAd() {
+  return (
+    <>
+      <Script
+        id="adsense-script"
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2479836262167230"
+        crossOrigin="anonymous"
+      />
+      <ins
+        className="adsbygoogle"
+        style={{ display: "block" }}
+        data-ad-client="ca-pub-2479836262167230"
+        data-ad-slot="4794678327"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      ></ins>
+      <Script
+        id="adsense-init"
+        dangerouslySetInnerHTML={{
+          __html: `(adsbygoogle = window.adsbygoogle || []).push({});`,
+        }}
+      />
+    </>
   );
 }
 
@@ -101,15 +130,15 @@ export default function Home() {
     if (!data) return null;
 
     const sections = [
-      { title: "Overview", key: "overview" },
-      { title: "Diagnostic Steps", key: "diagnostic_steps" },
-      { title: "Repair Steps", key: "repair_steps" },
-      { title: "Tools Needed", key: "tools_needed" },
-      { title: "Estimated Time", key: "time_estimate" },
-      { title: "Estimated Cost", key: "cost_estimate" },
-      { title: "Parts", key: "parts" },
-      { title: "Videos", key: "videos" },
-      { title: "Forums", key: "forums" },
+      { title: "🔎 Overview", key: "overview" },
+      { title: "🧰 Diagnostic Steps", key: "diagnostic_steps" },
+      { title: "🛠️ Repair Steps", key: "repair_steps" },
+      { title: "🔧 Tools Needed", key: "tools_needed" },
+      { title: "⏱️ Estimated Time", key: "time_estimate" },
+      { title: "💲 Estimated Cost", key: "cost_estimate" },
+      { title: "⚙️ Parts", key: "parts" },
+      { title: "🎥 Videos", key: "videos" },
+      { title: "💬 Forums", key: "forums" },
     ];
 
     return sections.map((sec, i) => {
@@ -158,7 +187,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6">
+    <main className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-6xl">
         <header className="flex items-center justify-between gap-3 mb-6">
           <div className="h-10 w-10 rounded-2xl bg-[color:var(--accent)] grid place-items-center text-white font-bold shadow-card">
@@ -170,9 +199,7 @@ export default function Home() {
 
         <div className="grid md:grid-cols-2 gap-6">
           <section className="card p-6">
-            <h2 className="text-lg font-medium mb-4 text-[color:var(--subtle)]">
-              Vehicle Details
-            </h2>
+            <h2 className="text-lg font-medium mb-4 text-[color:var(--subtle)]">Vehicle Details</h2>
             <form onSubmit={onSubmit} className="space-y-3">
               <div className="grid grid-cols-3 gap-3">
                 <input className="input" placeholder="Year" value={year} onChange={(e) => setYear(e.target.value)} />
@@ -189,9 +216,7 @@ export default function Home() {
                   {loading ? "Diagnosing…" : "Diagnose"}
                 </button>
                 <a className="btn btn-ghost" href="https://ogobuddy.org" target="_blank" rel="noopener noreferrer">Og Obuddy</a>
-                <button type="button" className="btn btn-ghost" onClick={onClear}>
-                  Clear
-                </button>
+                <button type="button" className="btn btn-ghost" onClick={onClear}>Clear</button>
               </div>
             </form>
           </section>
@@ -215,6 +240,11 @@ export default function Home() {
                 <pre className="bg-[color:var(--muted)] rounded-2xl p-4 text-xs overflow-auto mt-2">{result.raw}</pre>
               </details>
             )}
+
+            {/* Google AdSense Ad */}
+            <div className="mt-6">
+              <AdSenseAd />
+            </div>
           </section>
         </div>
 
