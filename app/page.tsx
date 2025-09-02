@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Script from "next/script";
 
 type Result = {
   ok: boolean;
@@ -10,7 +9,34 @@ type Result = {
   error?: string;
 };
 
-// ... LanguageSwitcher remains the same
+function LanguageSwitcher() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if ((window as any).__gt_injected) return;
+    (window as any).__gt_injected = true;
+
+    (window as any).googleTranslateElementInit = function () {
+      try {
+        new (window as any).google.translate.TranslateElement(
+          { pageLanguage: 'en', autoDisplay: false },
+          'google_translate_element'
+        );
+      } catch {}
+    };
+
+    const s = document.createElement('script');
+    s.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    s.async = true;
+    document.body.appendChild(s);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-sm text-[color:var(--subtle)]">Language</span>
+      <div id="google_translate_element" className="min-w-[180px]"></div>
+    </div>
+  );
+}
 
 export default function Home() {
   const [year, setYear] = useState("");
@@ -57,7 +83,79 @@ export default function Home() {
     setResult(null);
   }
 
-  // renderListOfLinks and renderFormatted remain the same
+  const renderListOfLinks = (items: string[]) =>
+    items.slice(0, 3).map((url, idx) => (
+      <div key={idx}>
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 underline"
+        >
+          {url}
+        </a>
+      </div>
+    ));
+
+  function renderFormatted(data: any) {
+    if (!data) return null;
+
+    const sections = [
+      { title: "Overview", key: "overview" },
+      { title: "Diagnostic Steps", key: "diagnostic_steps" },
+      { title: "Repair Steps", key: "repair_steps" },
+      { title: "Tools Needed", key: "tools_needed" },
+      { title: "Estimated Time", key: "time_estimate" },
+      { title: "Estimated Cost", key: "cost_estimate" },
+      { title: "Parts", key: "parts" },
+      { title: "Videos", key: "videos" },
+      { title: "Forums", key: "forums" },
+    ];
+
+    return sections.map((sec, i) => {
+      const value = data[sec.key];
+
+      if (!value || (Array.isArray(value) && value.length === 0)) {
+        return (
+          <div key={i}>
+            <strong>{sec.title}</strong>{" "}
+            {sec.key.includes("_steps") || Array.isArray(value)
+              ? `No ${sec.title.toLowerCase()} provided.`
+              : "N/A"}
+          </div>
+        );
+      }
+
+      if (Array.isArray(value)) {
+        if (sec.key === "parts" || sec.key === "videos" || sec.key === "forums") {
+          return (
+            <div key={i} className="mb-2">
+              <strong>{sec.title}</strong>
+              <div className="ml-4 mt-1">{renderListOfLinks(value)}</div>
+            </div>
+          );
+        }
+
+        return (
+          <div key={i} className="mb-2">
+            <strong>{sec.title}</strong>
+            <div className="ml-4 mt-1">
+              {value.map((item: string, idx: number) => (
+                <div key={idx}>- {item}</div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div key={i} className="mb-2">
+          <strong>{sec.title}</strong>
+          <div className="ml-4 mt-1">{value}</div>
+        </div>
+      );
+    });
+  }
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
@@ -99,23 +197,6 @@ export default function Home() {
           </section>
 
           <section className="card p-6">
-            {/* Google AdSense Responsive Ad */}
-            <div className="mb-4">
-              <ins className="adsbygoogle"
-                style={{ display: 'block' }}
-                data-ad-client="ca-pub-2479836262167230"
-                data-ad-slot="1234567890" // Replace with your actual Ad Slot
-                data-ad-format="auto"
-                data-full-width-responsive="true"></ins>
-              <Script
-                id="adsense-init"
-                strategy="afterInteractive"
-                dangerouslySetInnerHTML={{
-                  __html: `(adsbygoogle = window.adsbygoogle || []).push({});`,
-                }}
-              />
-            </div>
-
             <h2 className="text-lg font-medium mb-4 text-[color:var(--subtle)]">Result</h2>
             {!result && <div className="text-[color:var(--subtle)] text-sm">Results will appear here.</div>}
             {result && result.ok && result.data && (
