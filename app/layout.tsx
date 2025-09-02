@@ -13,6 +13,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
 
+        {/* Google AdSense Script */}
+        <Script
+          id="adsense-script"
+          strategy="afterInteractive"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2479836262167230"
+          crossOrigin="anonymous"
+          async
+        />
+
         {/* Monetag Script */}
         <Script
           id="monetag-script"
@@ -40,4 +49,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-
