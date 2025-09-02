@@ -19,14 +19,13 @@ function LanguageSwitcher() {
     (window as any).googleTranslateElementInit = function () {
       try {
         new (window as any).google.translate.TranslateElement(
-          { pageLanguage: "en", autoDisplay: false },
-          "google_translate_element"
+          { pageLanguage: 'en', autoDisplay: false },
+          'google_translate_element'
         );
       } catch {}
     };
-    const s = document.createElement("script");
-    s.src =
-      "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+    const s = document.createElement('script');
+    s.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
     s.async = true;
     document.body.appendChild(s);
   }, []);
@@ -63,16 +62,7 @@ export default function Home() {
       const resp = await fetch("/api/diagnose", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          year,
-          make,
-          model,
-          part,
-          code,
-          notes,
-          provider,
-          modelName,
-        }),
+        body: JSON.stringify({ year, make, model, part, code, notes, provider, modelName }),
       });
       const json = await resp.json();
       setResult(json);
@@ -108,20 +98,20 @@ export default function Home() {
       </div>
     ));
 
-  // Format JSON from API into clean sections
+  // Format JSON from API into readable sections
   function renderFormatted(data: any) {
     if (!data) return null;
 
     const sections = [
-      { title: "Overview", key: "overview" },
-      { title: "Diagnostic Steps", key: "diagnostic_steps" },
-      { title: "Repair Steps", key: "repair_steps" },
-      { title: "Tools Needed", key: "tools_needed" },
-      { title: "Estimated Time", key: "time_estimate" },
-      { title: "Estimated Cost", key: "cost_estimate" },
-      { title: "Parts", key: "parts" },
-      { title: "Videos", key: "videos" },
-      { title: "Forums", key: "forums" },
+      { title: "🔎 Overview", key: "overview" },
+      { title: "🧰 Diagnostic Steps", key: "diagnostic_steps" },
+      { title: "🛠️ Repair Steps", key: "repair_steps" },
+      { title: "🔧 Tools Needed", key: "tools_needed" },
+      { title: "⏱️ Estimated Time", key: "time_estimate" },
+      { title: "💲 Estimated Cost", key: "cost_estimate" },
+      { title: "⚙️ Parts", key: "parts" },
+      { title: "🎥 Videos", key: "videos" },
+      { title: "💬 Forums", key: "forums" },
     ];
 
     return sections.map((sec, i) => {
@@ -129,46 +119,42 @@ export default function Home() {
 
       if (!value || (Array.isArray(value) && value.length === 0)) {
         return (
-          <section key={i} className="mb-4">
-            <h3 className="font-semibold">{sec.title}</h3>
-            <p className="text-gray-600 text-sm">
-              {sec.key.includes("_steps") || Array.isArray(value)
-                ? `No ${sec.title.toLowerCase()} provided.`
-                : "N/A"}
-            </p>
-          </section>
+          <div key={i}>
+            <strong>{sec.title}</strong>{" "}
+            {sec.key.includes("_steps") || Array.isArray(value)
+              ? `No ${sec.title.toLowerCase()} provided.`
+              : "N/A"}
+          </div>
         );
       }
 
       if (Array.isArray(value)) {
         if (sec.key === "parts" || sec.key === "videos" || sec.key === "forums") {
           return (
-            <section key={i} className="mb-4">
-              <h3 className="font-semibold">{sec.title}</h3>
-              <div className="ml-4 mt-2">{renderListOfLinks(value)}</div>
-            </section>
+            <div key={i} className="mb-2">
+              <strong>{sec.title}</strong>
+              <div className="ml-4 mt-1">{renderListOfLinks(value)}</div>
+            </div>
           );
         }
 
         return (
-          <section key={i} className="mb-4">
-            <h3 className="font-semibold">{sec.title}</h3>
-            <ol className="ml-6 mt-2 list-decimal space-y-1 text-gray-700 text-sm">
+          <div key={i} className="mb-2">
+            <strong>{sec.title}</strong>
+            <div className="ml-4 mt-1">
               {value.map((item: string, idx: number) => (
-                <li key={idx}>{item}</li>
+                <div key={idx}>- {item}</div>
               ))}
-            </ol>
-          </section>
+            </div>
+          </div>
         );
       }
 
       return (
-        <section key={i} className="mb-4">
-          <h3 className="font-semibold">{sec.title}</h3>
-          <p className="text-gray-700 text-sm mt-2 whitespace-pre-line">
-            {value}
-          </p>
-        </section>
+        <div key={i} className="mb-2">
+          <strong>{sec.title}</strong>
+          <div className="ml-4 mt-1">{value}</div>
+        </div>
       );
     });
   }
@@ -191,66 +177,21 @@ export default function Home() {
             </h2>
             <form onSubmit={onSubmit} className="space-y-3">
               <div className="grid grid-cols-3 gap-3">
-                <input
-                  className="input"
-                  placeholder="Year"
-                  value={year}
-                  onChange={(e) => setYear(e.target.value)}
-                />
-                <input
-                  className="input"
-                  placeholder="Make"
-                  value={make}
-                  onChange={(e) => setMake(e.target.value)}
-                />
-                <input
-                  className="input"
-                  placeholder="Model"
-                  value={model}
-                  onChange={(e) => setModel(e.target.value)}
-                />
+                <input className="input" placeholder="Year" value={year} onChange={(e) => setYear(e.target.value)} />
+                <input className="input" placeholder="Make" value={make} onChange={(e) => setMake(e.target.value)} />
+                <input className="input" placeholder="Model" value={model} onChange={(e) => setModel(e.target.value)} />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <input
-                  className="input"
-                  placeholder="Part (e.g., Starter, O2 Sensor)"
-                  value={part}
-                  onChange={(e) => setPart(e.target.value)}
-                />
-                <input
-                  className="input"
-                  placeholder="OBD-II Code (e.g., P0303)"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                />
+                <input className="input" placeholder="Part (e.g., Starter, O2 Sensor)" value={part} onChange={(e) => setPart(e.target.value)} />
+                <input className="input" placeholder="OBD-II Code (e.g., P0303)" value={code} onChange={(e) => setCode(e.target.value)} />
               </div>
-              <textarea
-                className="input h-28 resize-none"
-                placeholder="Ask anything (symptoms, questions…)"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
+              <textarea className="input h-28 resize-none" placeholder="Ask anything (symptoms, questions…)" value={notes} onChange={(e) => setNotes(e.target.value)} />
               <div className="flex gap-3">
-                <button
-                  className="btn btn-primary flex-1"
-                  type="submit"
-                  disabled={loading}
-                >
+                <button className="btn btn-primary flex-1" type="submit" disabled={loading}>
                   {loading ? "Diagnosing…" : "Diagnose"}
                 </button>
-                <a
-                  className="btn btn-ghost"
-                  href="https://ogobuddy.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Og Obuddy
-                </a>
-                <button
-                  type="button"
-                  className="btn btn-ghost"
-                  onClick={onClear}
-                >
+                <a className="btn btn-ghost" href="https://ogobuddy.org" target="_blank" rel="noopener noreferrer">Og Obuddy</a>
+                <button type="button" className="btn btn-ghost" onClick={onClear}>
                   Clear
                 </button>
               </div>
@@ -258,14 +199,8 @@ export default function Home() {
           </section>
 
           <section className="card p-6">
-            <h2 className="text-lg font-medium mb-4 text-[color:var(--subtle)]">
-              Result
-            </h2>
-            {!result && (
-              <div className="text-[color:var(--subtle)] text-sm">
-                Results will appear here.
-              </div>
-            )}
+            <h2 className="text-lg font-medium mb-4 text-[color:var(--subtle)]">Result</h2>
+            {!result && <div className="text-[color:var(--subtle)] text-sm">Results will appear here.</div>}
             {result && result.ok && result.data && (
               <div className="bg-[color:var(--muted)] rounded-2xl p-4 text-sm overflow-auto whitespace-pre-wrap max-h-[700px]">
                 {renderFormatted(result.data)}
@@ -278,12 +213,8 @@ export default function Home() {
             )}
             {result?.raw && (
               <details className="mt-3">
-                <summary className="cursor-pointer text-[color:var(--subtle)]">
-                  Raw model output
-                </summary>
-                <pre className="bg-[color:var(--muted)] rounded-2xl p-4 text-xs overflow-auto mt-2">
-                  {result.raw}
-                </pre>
+                <summary className="cursor-pointer text-[color:var(--subtle)]">Raw model output</summary>
+                <pre className="bg-[color:var(--muted)] rounded-2xl p-4 text-xs overflow-auto mt-2">{result.raw}</pre>
               </details>
             )}
           </section>
@@ -296,4 +227,3 @@ export default function Home() {
     </main>
   );
 }
-
