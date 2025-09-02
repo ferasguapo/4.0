@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       code ? `OBD-II Code: ${code}` : "",
       notes ? `Notes: ${notes}` : "",
       "Please provide the response formatted as:\n" +
-      "📝 Overview\n🔍 Diagnostic Steps\n🛠 Repair Steps\n🔧 Tools Needed\n⏱ Estimated Time\n💰 Estimated Cost"
+      "Overview\nDiagnostic Steps\nRepair Steps\nTools Needed\nEstimated Time\nEstimated Cost"
     ].filter(Boolean).join("\n");
 
     const aiText = await callAI(userPrompt);
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`
     );
 
-    // --- Parts links (O'Reilly, AutoZone, Advanced Auto Parts) ---
+    // --- Parts links (O'Reilly, AutoZone, Advance Auto Parts) ---
     let aiParts: string[] = [];
     if (code) {
       const partsPrompt = `List the top 3 most likely parts/components that could cause OBD-II code ${code} in ${year ?? ""} ${make ?? ""} ${model ?? ""}. Provide only a comma-separated list, prioritize common parts.`;
@@ -83,14 +83,14 @@ export async function POST(req: NextRequest) {
       q => `https://www.google.com/search?q=${encodeURIComponent(q)}`
     );
 
-    // --- Build final response (emoji only on section titles) ---
+    // --- Build final response (no emojis in content) ---
     const finalData: any = {
-      overview: `📝 Overview\n${normalized.overview || "No overview available"}`,
+      overview: normalized.overview || "No overview available",
       diagnostic_steps: normalized.diagnostic_steps ?? [],
       repair_steps: normalized.repair_steps ?? [],
       tools_needed: normalized.tools_needed ?? [],
-      time_estimate: `⏱ Estimated Time\n${normalized.time_estimate || "N/A"}`,
-      cost_estimate: `💰 Estimated Cost\n${normalized.cost_estimate || "N/A"}`,
+      time_estimate: normalized.time_estimate || "N/A",
+      cost_estimate: normalized.cost_estimate || "N/A",
       parts: topPartsLinks,
       videos: youtubeLinks,
       forums: forumLinks,
@@ -105,4 +105,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
